@@ -2,16 +2,13 @@
 
 Uptime monitor in Node.js that send status changes to Chatbots.  Forked from https://github.com/intelligo-systems/uptime.js.  Added logging, status check interval configuration, and modified slack messages.
 
-[![NPM](https://nodei.co/npm/uptime.js.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/uptime.js/)
-
 
 | [Installation][] | [Usage][] | [Setting up Slack][] | [License][] |
-|---|---|---|---|---|
 
 # Installation
 
 ```
-npm install uptime.js --save
+yarn add WheelhouseStudios/uptime.js
 ```
 
 # Usage

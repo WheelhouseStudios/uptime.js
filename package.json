@@ -3,7 +3,6 @@
   "version": "1.2.4",
   "description": "Uptime monitor in Node.js that send status changes to Chatbots",
   "author": "Turtuvshin Byambaa",
-  "homepage": "https://uptime.js.org",
   "copyright": "Copyright 2019 Intelligo Systems",
   "license": "MIT",
   "main": "index.js",

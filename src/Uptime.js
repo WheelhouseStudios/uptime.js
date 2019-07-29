@@ -11,8 +11,8 @@ class Uptime extends EventEmitter{
           throw new Error("You need to specify an SLACK_WEBHOOK_URL");
         }
         this.SLACK_WEBHOOK_URL = options.SLACK_WEBHOOK_URL;
-        this.pingInterval = 1*1000*60
-        this.serviceStatus = {}
+        this.pingInterval = options.PING_INTERVAL || 1*1000*60;
+        this.serviceStatus = {};
     }
  
     pingService(url, cb){
@@ -25,9 +25,9 @@ class Uptime extends EventEmitter{
         if (!err && res.statusCode == 200) {
           // we'll use the time from the point we try to establish a connection with
           // the service until the first byte is received
-          cb(res.timingPhases.firstByte)
+          cb(res.timingPhases.firstByte);
         } else {
-          cb('OUTAGE')
+          cb('OUTAGE');
         }
       })
     }
@@ -44,7 +44,7 @@ class Uptime extends EventEmitter{
       }
       let slackPayload = {
         text: `*${message}*\n${serviceUrl}`
-      }
+      };
     
       request({
         method: 'POST',
@@ -52,7 +52,7 @@ class Uptime extends EventEmitter{
         body: slackPayload,
         json: true
       }, (err, res, body) => {
-        if (err) console.log(`Error posting to Slack: ${err}`)
+        if (err) console.log(`Error posting to Slack: ${err}`);
       })
     }
     
@@ -68,34 +68,34 @@ class Uptime extends EventEmitter{
           this.pingService(service.url, (serviceResponse) => {
             if (serviceResponse === 'OUTAGE' && this.serviceStatus[service.url].status !== 'OUTAGE') {
               // only update and post to Slack on state change
-              this.serviceStatus[service.url].status = 'OUTAGE'
-              this.postToSlack(service.url)
+              this.serviceStatus[service.url].status = 'OUTAGE';
+              this.postToSlack(service.url);
             } else {
               let responseTimes = this.serviceStatus[service.url].responseTimes
-              responseTimes.push(serviceResponse)
+              responseTimes.push(serviceResponse);
       
               // check degraded performance if we have 3 responses so we can average them
               if (responseTimes.length > 3) {
                 // remove the oldest response time (beginning of array)
-                responseTimes.shift()
+                responseTimes.shift();
       
                 // compute average of last 3 response times
-                let avgResTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
-                let currService = this.serviceStatus[service.url]
+                let avgResTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+                let currService = this.serviceStatus[service.url];
       
                 if (avgResTime > currService.timeout && currService.status !== 'DEGRADED') {
-                  currService.status = 'DEGRADED'
-                  this.postToSlack(service.url)
+                  currService.status = 'DEGRADED';
+                  this.postToSlack(service.url);
                 } else if (avgResTime < currService.timeout && currService.status !== 'OPERATIONAL') {
-                  currService.status = 'OPERATIONAL'
-                  this.postToSlack(service.url)
+                  currService.status = 'OPERATIONAL';
+                  this.postToSlack(service.url);
                 }
               }
       
             }
           })
-        }, this.pingInterval)
-      })
+        }, this.pingInterval);
+      });
     }
 }
 

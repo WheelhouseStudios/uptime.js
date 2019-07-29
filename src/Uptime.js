@@ -1,18 +1,33 @@
 'use strict';
 
 const EventEmitter = require('eventemitter3'),
-      request  = require('request');
+      request  = require('request'),
+      winston = require('winston');
 
 class Uptime extends EventEmitter{
    
     constructor(options) {
         super();
+        const logTransports = [
+          new winston.transports.Console(),
+        ];
         if (!options || (options && (!options.SLACK_WEBHOOK_URL))) {
           throw new Error("You need to specify an SLACK_WEBHOOK_URL");
         }
         this.SLACK_WEBHOOK_URL = options.SLACK_WEBHOOK_URL;
         this.pingInterval = options.PING_INTERVAL || 1*1000*60;
         this.serviceStatus = {};
+        if (options.LOG_FILE_NAME) {
+          logTransports.push(new winston.transports.File({
+            filename: options.LOG_FILE_NAME,
+            level: options.LOG_FILE_LEVEL || 'info',
+          }));
+        }
+        this.logger = winston.createLogger({
+          level: 'debug',
+          format: winston.format.json(),
+          transports
+        })
     }
  
     pingService(url, cb){
@@ -45,6 +60,8 @@ class Uptime extends EventEmitter{
       let slackPayload = {
         text: `*${message}*\n${serviceUrl}`
       };
+
+      this.logger.log('warn', slackPayload.text);
     
       request({
         method: 'POST',
@@ -52,7 +69,7 @@ class Uptime extends EventEmitter{
         body: slackPayload,
         json: true
       }, (err, res, body) => {
-        if (err) console.log(`Error posting to Slack: ${err}`);
+        if (err) this.logger.log('error', `Error posting to Slack: ${err}`);
       })
     }
     
@@ -63,9 +80,12 @@ class Uptime extends EventEmitter{
           responseTimes: [], // array containing the responses times for last 3 pings
           timeout: service.timeout // load up the timout from the config
         }
+
+        this.logger.log('info', `Monitoring ${service.url}`);
       
         setInterval(() => {
           this.pingService(service.url, (serviceResponse) => {
+            this.logger.log('debug', `Pinging ${service.url}`);
             if (serviceResponse === 'OUTAGE' && this.serviceStatus[service.url].status !== 'OUTAGE') {
               // only update and post to Slack on state change
               this.serviceStatus[service.url].status = 'OUTAGE';

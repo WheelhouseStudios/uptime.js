@@ -19,6 +19,8 @@ const Uptime   = require('uptime.js');
 const bot = new Uptime({
   SLACK_WEBHOOK_URL: 'SLACK_WEBHOOK_URL'
   PING_INTERVAL: , // In milliseconds, default 60,000/1 minute
+  LOG_FILE_NAME: 'log.txt' // If specified, outputs a logfile
+  LOG_FILE_LEVEL: 'info' // minimum winston log level to output to file, default 'info'
 });
 
 bot.monitor([

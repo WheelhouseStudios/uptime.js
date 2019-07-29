@@ -43,7 +43,7 @@ class Uptime extends EventEmitter{
          message = "System Outage :zzz:";
       }
       let slackPayload = {
-        text: `*${message}*\n_${serviceUrl}_`
+        text: `*${message}*\n${serviceUrl}`
       }
     
       request({

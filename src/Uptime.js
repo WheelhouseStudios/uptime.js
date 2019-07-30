@@ -26,7 +26,7 @@ class Uptime extends EventEmitter{
         this.logger = winston.createLogger({
           level: 'debug',
           format: winston.format.json(),
-          transports
+          transports: logTransports,
         })
     }
  

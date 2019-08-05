@@ -17,16 +17,17 @@ yarn add WheelhouseStudios/uptime.js
 const Uptime   = require('uptime.js');
 
 const bot = new Uptime({
-  SLACK_WEBHOOK_URL: 'SLACK_WEBHOOK_URL'
-  PING_INTERVAL: , // In milliseconds, default 60,000/1 minute
-  LOG_FILE_NAME: 'log.txt' // If specified, outputs a logfile
+  SLACK_WEBHOOK_URL: 'SLACK_WEBHOOK_URL',
+  PING_INTERVAL: 60000, // In milliseconds, default 60,000/1 minute
+  LOG_FILE_NAME: 'log.txt', // If specified, outputs a logfile
   LOG_FILE_LEVEL: 'info' // minimum winston log level to output to file, default 'info'
 });
 
 bot.monitor([
   {
     url: 'https://www.intelligo.systems', // URL of service we'll be pining
-    timeout: 200 // threshold in milliseconds above which is considered degraded performance
+    timeout: 200, // threshold in milliseconds above which is considered degraded performance
+    checkDegraded: true // Track degraded service and post related messages to slack
   }
 ]);
 

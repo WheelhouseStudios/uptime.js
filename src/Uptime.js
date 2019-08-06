@@ -79,7 +79,7 @@ class Uptime extends EventEmitter{
           status: 'OPERATIONAL', // initialize all services as operational when we start
           responseTimes: [], // array containing the responses times for last 3 pings
           timeout: service.timeout, // load up the timout from the config
-          checkDegraded: service.checkDegraded || true // Monitor degraded service
+          checkDegraded: service.checkDegraded == undefined ? true : service.checkDegraded, // Monitor degraded service
         }
 
         this.logger.log('info', `Monitoring ${service.url}`);

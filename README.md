@@ -27,7 +27,7 @@ bot.monitor([
   {
     url: 'https://www.intelligo.systems', // URL of service we'll be pining
     timeout: 200, // threshold in milliseconds above which is considered degraded performance
-    checkDegraded: true // Track degraded service and post related messages to slack
+    checkDegraded: 'no' // Track degraded service and post related messages to slack
   }
 ]);
 

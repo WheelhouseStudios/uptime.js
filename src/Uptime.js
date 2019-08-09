@@ -79,7 +79,7 @@ class Uptime extends EventEmitter{
           status: 'OPERATIONAL', // initialize all services as operational when we start
           responseTimes: [], // array containing the responses times for last 3 pings
           timeout: service.timeout, // load up the timout from the config
-          checkDegraded: service.checkDegraded == undefined ? true : service.checkDegraded, // Monitor degraded service
+          checkDegraded: service.checkDegraded || 'yes', // Monitor degraded service
         }
 
         this.logger.log('info', `Monitoring ${service.url}`);
@@ -104,7 +104,7 @@ class Uptime extends EventEmitter{
                 let avgResTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
                 let currService = this.serviceStatus[service.url];
       
-                if (avgResTime > currService.timeout && currService.status !== 'DEGRADED' && currService.checkDegraded) {
+                if (avgResTime > currService.timeout && currService.status !== 'DEGRADED' && currService.checkDegraded === 'yes') {
                   currService.status = 'DEGRADED';
                   this.postToSlack(service.url);
                 } else if (avgResTime < currService.timeout && currService.status !== 'OPERATIONAL') {
